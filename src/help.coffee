@@ -66,14 +66,13 @@ module.exports = (robot) ->
       cmds = cmds.filter (cmd) ->
         cmd.match new RegExp(filter, 'i')
       if cmds.length == 0
-        msg.send "No available commands match #{filter}"
-        return
+        cmds = ["No available commands match #{filter}"]
 
     emit = cmds.join "\n"
 
-    if replyInPrivate and msg.message?.user?.name?
-      msg.reply 'replied to you in private!'
-      robot.send {room: msg.message?.user?.name}, emit
+    user = msg.message?.user
+    if replyInPrivate and (user?.id? or user?.name?)
+      robot.send { room: user.id ? user.name }, emit
     else
       msg.reply emit
 
